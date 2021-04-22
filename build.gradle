@@ -69,34 +69,39 @@ grailsPublish {
     portalPassword = ""
 }
 
-bintray {
-    pkg {
-        name = "$project.name"
-        issueTrackerUrl = "https://github.com/jeetmp3/$project.name/issues"
-        vcsUrl = "https://github.com/jeetmp3/$project.name"
-        version {
-            attributes = ['grails-plugin': "$project.group:$project.name"]
-            name = project.version
+test {
+    testLogging {
+        events 'started', 'passed'
+    }
+}
+
+test {
+    jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    testLogging {
+        events 'started', 'passed'
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/uberall/spring-session")
+            credentials {
+                username = System.getenv("GITHUB_USER") ?: project.findProperty("gpr.user")
+                password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key")
+            }
         }
     }
-}
-
-test {
-    testLogging {
-        events 'started', 'passed'
-    }
-}
-
-test {
-    jvmArgs '-Xverify:none'
-}
-
-integrationTest {
-    jvmArgs '-Xverify:none'
-}
-
-integrationTest {
-    testLogging {
-        events 'started', 'passed'
+    publications {
+        // org.grails.grails-plugin-publish takes care of that
+        // cf. https://github.com/grails/grails-core/blob/master/grails-gradle-plugin/src/main/groovy/org/grails/gradle/plugin/publishing/GrailsCentralPublishGradlePlugin.groovy#L187
     }
 }
